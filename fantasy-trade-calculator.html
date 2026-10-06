@@ -837,11 +837,13 @@ function buildActivePlayers() {
         const scoringAdjustment = scoringAdjustments[scoring][position] || 1;
         const superflexAdjustment = superflex && position === "QB" ? 1.25 : 1;
 
+        const baseValues = rankingSnapshot.values?.[mode]?.[position]?.split("|").map(Number);
+
         return rankingSnapshot.lists[mode][position].split("|").map((name, index) => ({
             name,
             position,
             positionRank: index + 1,
-            value: Math.round(Math.max(100, 1000 - index * 9) * positionMultiplier * scoringAdjustment * superflexAdjustment)
+            value: Math.round((baseValues?.[index] || Math.max(100, 1000 - index * 9)) * positionMultiplier * scoringAdjustment * superflexAdjustment)
         }));
     });
 
@@ -945,9 +947,9 @@ function setTheme(isDark, persist = false) {
 function refreshRankings() {
     const mode = document.getElementById("rankingMode").value;
     activePlayers = buildActivePlayers();
-    document.getElementById("rankingSourceNote").textContent = mode === "redraft"
+    document.getElementById("rankingSourceNote").textContent = rankingSnapshot.sourceNotes?.[mode] || (mode === "redraft"
         ? "FantasyPros 2026 rest-of-season Half-PPR consensus (Oct. 6). QB/TE ranks beyond consensus depth are ordered by Sleeper Weeks 1-4 PPR points per game. Consensus reflects expert health, team and schedule judgments; full injury history is unavailable."
-        : "FantasyPros 2026 dynasty PPR consensus (Oct. 5). QB ranks beyond consensus depth use Weeks 1-4 PPR points per game with a modest age adjustment. Dynasty consensus reflects long-term age outlook; full injury history is unavailable.";
+        : "FantasyPros 2026 dynasty PPR consensus (Oct. 5). QB ranks beyond consensus depth use Weeks 1-4 PPR points per game with a modest age adjustment. Dynasty consensus reflects long-term age outlook; full injury history is unavailable.");
     document.querySelectorAll(".asset input.player-select").forEach(input => populatePlayerSelect(input, input.playerSearchResults));
 }
 
