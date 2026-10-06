@@ -1183,6 +1183,75 @@ setTheme(darkModeToggle.checked);
 refreshRankings();
 createPlayerRow("A");
 createPlayerRow("B");
+
+const rankingSheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRFR-eJbqGmlQcfvsndpjETVAXPVSJ2QEsx0zP2Tn5CzC2oJa4cpsKUO44YO9RKZKWwETM3YKphhPcG/pub";
+const rankingSheetTabs = { QB: "727466631", RB: "1240396246", WR: "2133074075", TE: "983500710" };
+
+function parseCsv(text) {
+    const rows = [];
+    let row = [], field = "", quoted = false;
+    for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        if (quoted) {
+            if (char === '"' && text[i + 1] === '"') { field += '"'; i++; }
+            else if (char === '"') quoted = false;
+            else field += char;
+        } else if (char === '"') quoted = true;
+        else if (char === ",") { row.push(field); field = ""; }
+        else if (char === "\n" || char === "\r") {
+            if (char === "\r" && text[i + 1] === "\n") i++;
+            row.push(field); rows.push(row); row = []; field = "";
+        } else field += char;
+    }
+    if (field || row.length) { row.push(field); rows.push(row); }
+    return rows;
+}
+
+async function loadSheetTab(gid) {
+    const response = await fetch(rankingSheetUrl + "?gid=" + gid + "&single=true&output=csv", { cache: "no-store" });
+    if (!response.ok) throw new Error("Sheet request failed: " + response.status);
+    const rows = parseCsv(await response.text());
+    const headerIndex = rows.findIndex(row => row.some(cell => cell.trim() === "Player"));
+    if (headerIndex < 0) throw new Error("No Player column");
+    const header = rows[headerIndex].map(cell => cell.trim());
+    const playerColumn = header.indexOf("Player");
+    const valueColumn = header.findIndex(cell => cell.startsWith("Value"));
+    const seen = new Set();
+    const entries = rows.slice(headerIndex + 1)
+        .map(row => ({ name: (row[playerColumn] || "").trim(), value: Number((row[valueColumn] || "").replace(/,/g, "")) }))
+        .filter(entry => entry.name && !seen.has(entry.name) && seen.add(entry.name));
+    if (!entries.length) throw new Error("No players");
+    return {
+        list: entries.map(entry => entry.name).join("|"),
+        values: valueColumn >= 0 && entries.every(entry => entry.value > 0) ? entries.map(entry => entry.value).join("|") : null
+    };
+}
+
+// Pull the latest rankings from the published sheet; the bundled snapshot stays in place for any tab that fails.
+async function loadSheetRankings() {
+    const results = await Promise.allSettled(positionOrder.map(position => loadSheetTab(rankingSheetTabs[position])));
+    let loaded = 0;
+    results.forEach((result, index) => {
+        if (result.status !== "fulfilled") return;
+        const position = positionOrder[index];
+        loaded++;
+        ["redraft", "dynasty"].forEach(mode => {
+            rankingSnapshot.lists[mode][position] = result.value.list;
+            rankingSnapshot.values ??= {};
+            rankingSnapshot.values[mode] ??= {};
+            if (result.value.values) rankingSnapshot.values[mode][position] = result.value.values;
+            else delete rankingSnapshot.values[mode][position];
+        });
+    });
+    if (!loaded) return;
+    if (rankingSnapshot.sourceNotes && loaded === positionOrder.length) {
+        rankingSnapshot.sourceNotes.redraft = "Live rest-of-season rankings and values from the Fantasy Football ROS Rankings sheet. Positions without sheet values are scored by rank.";
+    }
+    refreshRankings();
+    calculate();
+}
+
+loadSheetRankings();
 </script>
 </body>
 </html>
