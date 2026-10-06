@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f1f4ef">
+<title>Fantasy Trade Calculator</title>
+<script>
+    try {
+        if (localStorage.getItem("fantasy-trade-theme") === "dark") {
+            document.documentElement.dataset.theme = "dark";
+        }
+    } catch {}
+</script>
+<!-- <style media="not all">
+    :root {
+        color-scheme: light;
+        --paper: #f1f4ef;
+        --ink: #142b27;
+        --muted: #60716c;
+        --line: #d5ded8;
+        --panel: #ffffff;
+        --field: #f5f7f4;
+        --green: #16745b;
+        --green-soft: #e3f2e9;
+        --orange: #b65c34;
+        --orange-soft: #fbede5;
+        --shadow: 0 12px 35px rgba(20, 43, 39, .07);
+    }
+
+    :root[data-theme="dark"] {
+        color-scheme: dark;
+        --paper: #111916;
+        --ink: #edf5ef;
+        --muted: #a4b2aa;
+        --line: #34443c;
+        --panel: #1a2520;
+        --field: #121b17;
+        --green: #78d5a6;
+        --green-soft: #233d31;
+        --orange: #ff9b70;
+        --orange-soft: #442b21;
+        --shadow: 0 12px 35px rgba(0, 0, 0, .24);
+    }
+        --orange-soft: #442b21;
+        --shadow: 0 12px 35px rgba(0, 0, 0, .24);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+        margin: 0;
+        padding: 36px 22px 52px;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: "Segoe UI", Tahoma, sans-serif;
+    }
+
+    .calculator { max-width: 1040px; margin: 0 auto; }
+
+    .masthead {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding-bottom: 22px;
+        border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow {
+        margin: 0 0 8px;
+        color: var(--green);
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 1.4px;
+        text-transform: uppercase;
+    }
+
+    h1, h2, p { margin-top: 0; }
+
+    h1 {
+        margin-bottom: 0;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 34px;
+        font-weight: 600;
+        line-height: 1.12;
+    }
+
+    .settings {
+        display: flex;
+        align-items: end;
+        flex-wrap: wrap;
+        gap: 14px;
+        padding: 18px 0;
+        border-bottom: 1px solid var(--line);
+    }
+
+    .setting { display: grid; gap: 6px; }
+
+    .setting label, .setting-title {
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: .7px;
+        text-transform: uppercase;
+    }
+
+    select, button, input { font: inherit; }
+
+    .setting select {
+        min-width: 150px;
+        min-height: 42px;
+        padding: 0 34px 0 12px;
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        background: var(--panel);
+        color: var(--ink);
+    }
+
+    .setting input[type="search"] {
+        width: 220px;
+        min-height: 42px;
+        padding: 0 12px;
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        background: var(--panel);
+        color: var(--ink);
+    }
+
+    .position-multipliers {
+        flex: 1 0 100%;
+        padding-top: 12px;
+        border-top: 1px solid var(--line);
+    }
+
+    .position-multipliers summary {
+        width: fit-content;
+        color: var(--green);
+        font-size: 12px;
+        font-weight: 750;
+        cursor: pointer;
+    }
+
+    .multiplier-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(110px, 1fr));
+        gap: 12px;
+        max-width: 620px;
+        padding-top: 12px;
+    }
+
+    .multiplier-grid label {
+        display: grid;
+        gap: 6px;
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+    }
+
+    .multiplier-grid input {
+        width: 100%;
+        min-height: 38px;
+        padding: 0 9px;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        background: var(--panel);
+        color: var(--ink);
+        font-variant-numeric: tabular-nums;
+    }
+
+    .toggle {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        min-height: 42px;
+        padding: 0 12px;
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        background: var(--panel);
+        color: var(--ink);
+        font-size: 14px;
+        font-weight: 650;
+        cursor: pointer;
+    }
+
+    .toggle input { width: 17px; height: 17px; accent-color: var(--green); }
+
+    .value-note {
+        flex: 1 1 260px;
+        align-self: center;
+        margin: 0 0 0 auto;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .teams {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+        padding-top: 20px;
+    }
+
+    .team {
+        min-width: 0;
+        padding: 20px;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        background: var(--panel);
+        box-shadow: var(--shadow);
+    }
+
+    .team-header {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 18px;
+    }
+
+    h2 {
+        margin-bottom: 0;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 22px;
+        font-weight: 600;
+    }
+
+    .team-label {
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: .7px;
+        text-transform: uppercase;
+    }
+
+    .asset-list { display: grid; gap: 9px; }
+
+    .asset {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 76px 38px;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .asset-entry { position: relative; display: grid; gap: 6px; }
+
+    .player-stats {
+        padding: 0 2px 9px;
+        border-bottom: 1px solid var(--line);
+    }
+
+    .player-stats summary {
+        width: fit-content;
+        color: var(--green);
+        font-size: 12px;
+        font-weight: 750;
+        cursor: pointer;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px 12px;
+        margin: 10px 0 0;
+    }
+
+    .stats-grid div { min-width: 0; }
+    .stats-grid dt { color: var(--muted); font-size: 10px; line-height: 1.3; }
+    .stats-grid dd { margin: 3px 0 0; font-size: 13px; font-weight: 750; font-variant-numeric: tabular-nums; }
+    .stats-source { margin: 10px 0 0; color: var(--muted); font-size: 10px; line-height: 1.45; }
+    .stats-source a { color: var(--green); }
+
+    .asset select, .asset input.player-select {
+        width: 100%;
+        min-width: 0;
+        height: 42px;
+        padding: 0 10px;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        background: var(--field);
+        color: var(--ink);
+    }
+
+    .asset input.player-select::placeholder { color: var(--muted); }
+
+    .asset select:focus, .setting select:focus, button:focus-visible, input:focus-visible {
+        outline: 3px solid rgba(22, 116, 91, .22);
+        outline-offset: 1px;
+    }
+    .asset input.player-select[aria-invalid="true"] { border-color: var(--orange); }
+
+    .asset-value {
+        display: grid;
+        place-items: center;
+        height: 42px;
+        border-radius: 4px;
+        background: var(--green-soft);
+        color: var(--green);
+        font-size: 14px;
+        font-weight: 800;
+        font-variant-numeric: tabular-nums;
+    }
+        const scoring = document.getElementById("scoring").value;
+        const superflex = document.getElementById("superflex").checked;
+        const playersByValue = positionOrder.flatMap(position => {
+            const multiplierInput = document.getElementById(position.toLowerCase() + "Multiplier");
+            const rawMultiplier = Number(multiplierInput.value);
+            const positionMultiplier = Math.min(1.5, Math.max(.25, Number.isFinite(rawMultiplier) ? rawMultiplier : 1));
+            const scoringAdjustment = scoringAdjustments[scoring][position] || 1;
+            const superflexAdjustment = superflex && position === "QB" ? 1.25 : 1;
+
+            return rankingSnapshot.lists[mode][position].split("|").map((name, index) => ({
+                name,
+                position,
+                positionRank: index + 1,
+                value: Math.round(Math.max(100, 1000 - index * 9) * positionMultiplier * scoringAdjustment * superflexAdjustment)
+                color: var(--green);
+                font-size: 14px;
+                font-weight: 800;
+                font-variant-numeric: tabular-nums;
+            }
+
+            .remove-player {
+                display: grid;
+                place-items: center;
+                width: 38px;
+                height: 38px;
+                border: 1px solid transparent;
+                border-radius: 4px;
+                background: transparent;
+                color: var(--muted);
+                font-size: 12px;
+                font-weight: 700;
+                cursor: pointer;
+            }
+
+            .remove-player:hover { border-color: var(--line); background: var(--field); color: var(--orange); }
+            .team-actions { margin-top: 13px; }
+
+            .add-player {
+                min-height: 38px;
+                padding: 0 12px;
+                border: 1px solid var(--line);
+                border-radius: 4px;
+                background: var(--panel);
+                color: var(--green);
+                font-size: 13px;
+                font-weight: 750;
+                cursor: pointer;
+            }
+
+            .add-player:hover { border-color: var(--green); background: var(--green-soft); }
+
+            .team-total {
+                display: flex;
+                align-items: baseline;
+                justify-content: space-between;
+                gap: 12px;
+                margin-top: 19px;
+                padding-top: 15px;
+                border-top: 1px solid var(--line);
+            }
+
+            .team-total span:first-child {
+                color: var(--muted);
+                font-size: 12px;
+                font-weight: 800;
+                letter-spacing: .7px;
+                text-transform: uppercase;
+            }
+
+            .team-total strong { font-size: 23px; font-variant-numeric: tabular-nums; }
+
+            .result {
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) auto;
+                align-items: center;
+                gap: 12px 24px;
+                margin-top: 18px;
+                padding: 20px 22px;
+                border: 1px solid var(--line);
+                border-left: 4px solid var(--green);
+                border-radius: 6px;
+                background: var(--panel);
+                box-shadow: var(--shadow);
+            }
+
+            .result h2 { margin-bottom: 5px; font-size: 19px; }
+            .result-message { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.45; }
+            .result-stat { text-align: right; }
+            .difference { font-size: 25px; font-weight: 800; font-variant-numeric: tabular-nums; }
+            .percentage { margin-top: 3px; color: var(--muted); font-size: 12px; }
+            .result.is-even { border-left-color: var(--green); }
+            .result.is-unbalanced { border-left-color: var(--orange); }
+            .result.is-pending .result-stat { visibility: hidden; }
+
+            @media (max-width: 680px) {
+                body { padding: 24px 14px 36px; }
+                .masthead { align-items: flex-start; }
+                h1 { font-size: 29px; }
+                .settings { align-items: stretch; }
+                .setting { flex: 1 1 145px; }
+                .setting select, .setting input[type="search"] { width: 100%; }
+                .toggle { align-self: end; }
+                .value-note { flex-basis: 100%; margin: 0; }
+                .teams { grid-template-columns: 1fr; gap: 12px; padding-top: 14px; }
+                .team { padding: 17px; }
+                .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+                .multiplier-grid { grid-template-columns: repeat(2, minmax(110px, 1fr)); }
+            }
+
+            @media (max-width: 380px) {
+                .asset { grid-template-columns: minmax(0, 1fr) 62px 34px; gap: 5px; }
+                .asset select, .asset input.player-select { padding: 0 6px; font-size: 13px; }
+                .asset-value { font-size: 12px; }
+                .remove-player { width: 34px; }
+                .result { padding: 16px; }
+                .difference { font-size: 21px; }
+            }
+        </style> -->
+<style>
+    :root {
+        color-scheme: light;
+        --paper: #f1f4ef;
+        --ink: #142b27;
+        --muted: #60716c;
+        --line: #d5ded8;
+        --panel: #ffffff;
+        --field: #f5f7f4;
+        --green: #16745b;
+        --green-soft: #e3f2e9;
+        --orange: #b65c34;
+        --orange-soft: #fbede5;
+        --shadow: 0 12px 35px rgba(20, 43, 39, .07);
+    }
+
+    :root[data-theme="dark"] {
+        color-scheme: dark;
+        --paper: #111916;
+        --ink: #edf5ef;
+        --muted: #a4b2aa;
+        --line: #34443c;
+        --panel: #1a2520;
+        --field: #121b17;
+        --green: #78d5a6;
+        --green-soft: #233d31;
+        --orange: #ff9b70;
+        --orange-soft: #442b21;
+        --shadow: 0 12px 35px rgba(0, 0, 0, .24);
+    }
+
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 36px 22px 52px; background: var(--paper); color: var(--ink); font-family: "Segoe UI", Tahoma, sans-serif; }
+    .calculator { max-width: 1040px; margin: 0 auto; }
+    .masthead { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 22px; border-bottom: 1px solid var(--line); }
+    .eyebrow { margin: 0 0 8px; color: var(--green); font-size: 11px; font-weight: 800; letter-spacing: 1.4px; text-transform: uppercase; }
+    h1, h2, p { margin-top: 0; }
+    h1 { margin-bottom: 0; font-family: Georgia, "Times New Roman", serif; font-size: 34px; font-weight: 600; line-height: 1.12; }
+    .settings { display: flex; align-items: end; flex-wrap: wrap; gap: 14px; padding: 18px 0; border-bottom: 1px solid var(--line); }
+    .setting { display: grid; gap: 6px; }
+    .setting label, .setting-title { color: var(--muted); font-size: 11px; font-weight: 800; letter-spacing: .7px; text-transform: uppercase; }
+    select, button, input { font: inherit; }
+    .setting select, .setting input[type="search"] { min-width: 150px; min-height: 42px; padding: 0 12px; border: 1px solid var(--line); border-radius: 5px; background: var(--panel); color: var(--ink); }
+    .toggle { display: flex; align-items: center; gap: 9px; min-height: 42px; padding: 0 12px; border: 1px solid var(--line); border-radius: 5px; background: var(--panel); color: var(--ink); font-size: 14px; font-weight: 650; cursor: pointer; }
+    .toggle input { width: 17px; height: 17px; accent-color: var(--green); }
+    .value-note { flex: 1 1 260px; align-self: center; margin: 0 0 0 auto; color: var(--muted); font-size: 12px; line-height: 1.5; }
+    .position-multipliers { flex: 1 0 100%; padding-top: 12px; border-top: 1px solid var(--line); }
+    .position-multipliers summary { width: fit-content; color: var(--green); font-size: 12px; font-weight: 750; cursor: pointer; }
+    .multiplier-grid { display: grid; grid-template-columns: repeat(4, minmax(110px, 1fr)); gap: 12px; max-width: 620px; padding-top: 12px; }
+    .multiplier-grid label { display: grid; gap: 6px; color: var(--muted); font-size: 11px; font-weight: 800; text-transform: uppercase; }
+    .multiplier-grid input { width: 100%; min-height: 38px; padding: 0 9px; border: 1px solid var(--line); border-radius: 4px; background: var(--panel); color: var(--ink); font-variant-numeric: tabular-nums; }
+    .teams { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; padding-top: 20px; }
+    .team { min-width: 0; padding: 20px; border: 1px solid var(--line); border-radius: 7px; background: var(--panel); box-shadow: var(--shadow); }
+    .team-header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
+    h2 { margin-bottom: 0; font-family: Georgia, "Times New Roman", serif; font-size: 22px; font-weight: 600; }
+    .team-label { color: var(--muted); font-size: 11px; font-weight: 800; letter-spacing: .7px; text-transform: uppercase; }
+    .asset-list { display: grid; gap: 9px; }
+    .asset-entry { display: grid; gap: 6px; }
+    .asset { display: grid; grid-template-columns: minmax(0, 1fr) 76px 38px; gap: 8px; align-items: center; }
+    .asset input.player-select { width: 100%; min-width: 0; height: 42px; padding: 0 10px; border: 1px solid var(--line); border-radius: 4px; background: var(--field); color: var(--ink); }
+    .asset input.player-select::placeholder { color: var(--muted); }
+    .asset input.player-select[aria-invalid="true"] { border-color: var(--orange); }
+    .asset select:focus, .setting select:focus, button:focus-visible, input:focus-visible { outline: 3px solid rgba(22, 116, 91, .22); outline-offset: 1px; }
+    .player-search-results { position: absolute; z-index: 5; top: 47px; left: 0; width: calc(100% - 84px); max-height: 300px; overflow-y: auto; border: 1px solid var(--line); border-radius: 4px; background: var(--panel); box-shadow: var(--shadow); }
+    .player-search-results[hidden] { display: none; }
+    .player-search-option { display: flex; justify-content: space-between; gap: 12px; width: 100%; min-height: 38px; padding: 8px 10px; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; background: var(--panel); color: var(--ink); text-align: left; cursor: pointer; }
+    .player-search-option:hover, .player-search-option:focus-visible { background: var(--green-soft); color: var(--ink); }
+    .player-search-meta { flex: 0 0 auto; color: var(--muted); font-size: 11px; }
+    .player-search-empty { padding: 10px; color: var(--muted); font-size: 12px; }
+    .asset-value { display: grid; place-items: center; height: 42px; border-radius: 4px; background: var(--green-soft); color: var(--green); font-size: 14px; font-weight: 800; font-variant-numeric: tabular-nums; }
+    .player-stats { padding: 0 2px 9px; border-bottom: 1px solid var(--line); }
+    .player-stats summary { width: fit-content; color: var(--green); font-size: 12px; font-weight: 750; cursor: pointer; }
+    .stats-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px 12px; margin: 10px 0 0; }
+    .stats-grid div { min-width: 0; }
+    .stats-grid dt { color: var(--muted); font-size: 10px; line-height: 1.3; }
+    .stats-grid dd { margin: 3px 0 0; font-size: 13px; font-weight: 750; font-variant-numeric: tabular-nums; }
+    .stats-source { margin: 10px 0 0; color: var(--muted); font-size: 10px; line-height: 1.45; }
+    .stats-source a { color: var(--green); }
+    .remove-player { display: grid; place-items: center; width: 38px; height: 38px; border: 1px solid transparent; border-radius: 4px; background: transparent; color: var(--muted); font-size: 12px; font-weight: 700; cursor: pointer; }
+    .remove-player:hover { border-color: var(--line); background: var(--field); color: var(--orange); }
+    .team-actions { margin-top: 13px; }
+    .add-player { min-height: 38px; padding: 0 12px; border: 1px solid var(--line); border-radius: 4px; background: var(--panel); color: var(--green); font-size: 13px; font-weight: 750; cursor: pointer; }
+    .add-player:hover { border-color: var(--green); background: var(--green-soft); }
+    .team-total { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-top: 19px; padding-top: 15px; border-top: 1px solid var(--line); }
+    .team-total span:first-child { color: var(--muted); font-size: 12px; font-weight: 800; letter-spacing: .7px; text-transform: uppercase; }
+    .team-total strong { font-size: 23px; font-variant-numeric: tabular-nums; }
+    .result { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 12px 24px; margin-top: 18px; padding: 20px 22px; border: 1px solid var(--line); border-left: 4px solid var(--green); border-radius: 6px; background: var(--panel); box-shadow: var(--shadow); }
+    .result h2 { margin-bottom: 5px; font-size: 19px; }
+    .result-message { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.45; }
+    .result-stat { text-align: right; }
+    .difference { font-size: 25px; font-weight: 800; font-variant-numeric: tabular-nums; }
+    .percentage { margin-top: 3px; color: var(--muted); font-size: 12px; }
+    .result.is-even { border-left-color: var(--green); }
+    .result.is-unbalanced { border-left-color: var(--orange); }
+    .result.is-pending .result-stat { visibility: hidden; }
+    @media (max-width: 680px) {
+        body { padding: 24px 14px 36px; }
+        .masthead { align-items: flex-start; }
+        h1 { font-size: 29px; }
+        .settings { align-items: stretch; }
+        .setting { flex: 1 1 145px; }
+        .setting select, .setting input[type="search"] { width: 100%; }
+        .toggle { align-self: end; }
+        .value-note { flex-basis: 100%; margin: 0; }
+        .teams { grid-template-columns: 1fr; gap: 12px; padding-top: 14px; }
+        .team { padding: 17px; }
+        .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .multiplier-grid { grid-template-columns: repeat(2, minmax(110px, 1fr)); }
+    }
+    @media (max-width: 380px) {
+        .asset { grid-template-columns: minmax(0, 1fr) 62px 34px; gap: 5px; }
+        .asset input.player-select { padding: 0 6px; font-size: 13px; }
+        .asset-value { font-size: 12px; }
+        .remove-player { width: 34px; }
+        .result { padding: 16px; }
+        .difference { font-size: 21px; }
+    }
+</style>
+        </head>
+        <body>
+        <main class="calculator">
+            <header class="masthead">
+                <div>
+                    <p class="eyebrow">Fantasy football / trade desk</p>
+                    <h1>Trade Calculator</h1>
+                </div>
+            </header>
+
+    <section class="settings" aria-label="League and ranking settings">
+        <div class="setting">
+            <label for="scoring">Scoring format</label>
+            <select id="scoring">
+                <option value="standard">Standard</option>
+                <option value="half">Half PPR</option>
+                <option value="ppr">PPR</option>
+            </select>
+        </div>
+        <div class="setting">
+            <label for="rankingMode">Ranking mode</label>
+            <select id="rankingMode">
+                <option value="redraft">Rest of season</option>
+                <option value="dynasty">Dynasty</option>
+            </select>
+        </div>
+        <label class="toggle" for="superflex">
+            <input id="superflex" type="checkbox">
+            Superflex league
+        </label>
+        <label class="toggle" for="darkMode">
+            <input id="darkMode" type="checkbox">
+            Dark mode
+        </label>
+        <details class="position-multipliers">
+            <summary>Position multipliers</summary>
+            <div class="multiplier-grid">
+                <label>QB<input id="qbMultiplier" type="number" min="0.25" max="1.5" step="0.05" value="0.70"></label>
+                <label>RB<input id="rbMultiplier" type="number" min="0.25" max="1.5" step="0.05" value="1.00"></label>
+                <label>WR<input id="wrMultiplier" type="number" min="0.25" max="1.5" step="0.05" value="0.93"></label>
+                <label>TE<input id="teMultiplier" type="number" min="0.25" max="1.5" step="0.05" value="0.78"></label>
+            </div>
+        </details>
+        <p class="value-note" id="rankingSourceNote" role="status"></p>
+    </section>
+
+    <section class="teams" aria-label="Trade assets">
+        <article class="team" aria-labelledby="team-a-heading">
+            <div class="team-header">
+                <h2 id="team-a-heading">Team A</h2>
+                <span class="team-label">Receives</span>
+            </div>
+            <div class="asset-list" id="teamA"></div>
+            <div class="team-actions"><button class="add-player" type="button" data-team="A">+ Add player</button></div>
+            <div class="team-total"><span>Trade value</span><strong id="totalA">0</strong></div>
+        </article>
+
+        <article class="team" aria-labelledby="team-b-heading">
+            <div class="team-header">
+                <h2 id="team-b-heading">Team B</h2>
+                <span class="team-label">Receives</span>
+            </div>
+            <div class="asset-list" id="teamB"></div>
+            <div class="team-actions"><button class="add-player" type="button" data-team="B">+ Add player</button></div>
+            <div class="team-total"><span>Trade value</span><strong id="totalB">0</strong></div>
+        </article>
+    </section>
+
+    <section class="result is-pending" id="result" aria-live="polite" aria-atomic="true">
+        <div>
+            <h2>Trade comparison</h2>
+            <p class="result-message" id="winner">Add at least one player to both sides to compare.</p>
+        </div>
+        <div class="result-stat">
+            <div class="difference" id="difference">0</div>
+            <div class="percentage" id="percentage"></div>
+        </div>
+    </section>
+</main>
+
+<script src="./fantasy-rankings-data.js"></script>
+<script>
+const players = [
+    { name: "Josh Allen", position: "QB", value: 1000 },
+    { name: "Brock Purdy", position: "QB", value: 950 },
+    { name: "Patrick Mahomes", position: "QB", value: 925 },
+    { name: "Joe Burrow", position: "QB", value: 900 },
+    { name: "Dak Prescott", position: "QB", value: 875 },
+    { name: "Tyler Shough", position: "QB", value: 850 },
+    { name: "Trevor Lawrence", position: "QB", value: 825 },
+    { name: "Lamar Jackson", position: "QB", value: 800 },
+    { name: "Jared Goff", position: "QB", value: 775 },
+    { name: "Caleb Williams", position: "QB", value: 750 },
+    { name: "Bryce Young", position: "QB", value: 725 },
+    { name: "Kirk Cousins", position: "QB", value: 700 },
+    { name: "Jalen Hurts", position: "QB", value: 675 },
+    { name: "Sam Darnold", position: "QB", value: 650 },
+    { name: "Drake Maye", position: "QB", value: 625 },
+    { name: "Jayden Daniels", position: "QB", value: 600 },
+    { name: "Matthew Stafford", position: "QB", value: 575 },
+    { name: "Bo Nix", position: "QB", value: 550 },
+    { name: "Jordan Love", position: "QB", value: 525 },
+    { name: "C.J. Stroud", position: "QB", value: 500 },
+    { name: "Jacoby Brissett", position: "QB", value: 475 },
+    { name: "Justin Herbert", position: "QB", value: 450 },
+    { name: "Aaron Rodgers", position: "QB", value: 425 },
+    { name: "Daniel Jones", position: "QB", value: 400 },
+    { name: "Michael Penix Jr.", position: "QB", value: 375 },
+    { name: "Kyler Murray", position: "QB", value: 350 },
+    { name: "Jameis Winston", position: "QB", value: 325 },
+    { name: "Deshaun Watson", position: "QB", value: 300 },
+    { name: "Geno Smith", position: "QB", value: 275 },
+    { name: "Malik Willis", position: "QB", value: 250 },
+    { name: "Cam Ward", position: "QB", value: 225 },
+    { name: "Jahmyr Gibbs", position: "RB", value: 1000 },
+    { name: "Bijan Robinson", position: "RB", value: 989 },
+    { name: "Kenneth Walker III", position: "RB", value: 952 },
+    { name: "Jonathan Taylor", position: "RB", value: 924 },
+    { name: "Derrick Henry", position: "RB", value: 907 },
+    { name: "Christian McCaffrey", position: "RB", value: 889 },
+    { name: "Chase Brown", position: "RB", value: 876 },
+    { name: "Kyren Williams", position: "RB", value: 871 },
+    { name: "Javonte Williams", position: "RB", value: 858 },
+    { name: "James Cook", position: "RB", value: 837 },
+    { name: "Breece Hall", position: "RB", value: 796 },
+    { name: "Chuba Hubbard", position: "RB", value: 793 },
+    { name: "Ashton Jeanty", position: "RB", value: 785 },
+    { name: "Jeremiyah Love", position: "RB", value: 763 },
+    { name: "Bhayshul Tuten", position: "RB", value: 752 },
+    { name: "Jaylen Warren", position: "RB", value: 732 },
+    { name: "D'Andre Swift", position: "RB", value: 716 },
+    { name: "Quinshon Judkins", position: "RB", value: 700 },
+    { name: "Cam Skattebo", position: "RB", value: 679 },
+    { name: "Kyle Monangai", position: "RB", value: 653 },
+    { name: "David Montgomery", position: "RB", value: 635 },
+    { name: "Jordan Mason", position: "RB", value: 612 },
+    { name: "Rhamondre Stevenson", position: "RB", value: 594 },
+    { name: "TreVeyon Henderson", position: "RB", value: 576 },
+    { name: "Omarion Hampton", position: "RB", value: 563 },
+    { name: "Travis Etienne Jr.", position: "RB", value: 550 },
+    { name: "RJ Harvey", position: "RB", value: 489 },
+    { name: "Keaton Mitchell", position: "RB", value: 467 },
+    { name: "Zach Charbonnet", position: "RB", value: 435 },
+    { name: "Tony Pollard", position: "RB", value: 400 },
+    { name: "Jaxon Smith-Njigba", position: "WR", value: 1000 },
+    { name: "Puka Nacua", position: "WR", value: 989 },
+    { name: "CeeDee Lamb", position: "WR", value: 970 },
+    { name: "Amon-Ra St. Brown", position: "WR", value: 950 },
+    { name: "Ja'Marr Chase", position: "WR", value: 935 },
+    { name: "Chris Olave", position: "WR", value: 920 },
+    { name: "Nico Collins", position: "WR", value: 900 },
+    { name: "Zay Flowers", position: "WR", value: 880 },
+    { name: "Tetairoa McMillan", position: "WR", value: 860 },
+    { name: "Justin Jefferson", position: "WR", value: 850 },
+    { name: "Garrett Wilson", position: "WR", value: 835 },
+    { name: "Drake London", position: "WR", value: 820 },
+    { name: "Parker Washington", position: "WR", value: 805 },
+    { name: "Christian Watson", position: "WR", value: 790 },
+    { name: "Davante Adams", position: "WR", value: 775 },
+    { name: "Rashee Rice", position: "WR", value: 760 },
+    { name: "Tee Higgins", position: "WR", value: 745 },
+    { name: "A.J. Brown", position: "WR", value: 730 },
+    { name: "Jalen Coker", position: "WR", value: 715 },
+    { name: "Michael Wilson", position: "WR", value: 700 },
+    { name: "Matthew Golden", position: "WR", value: 685 },
+    { name: "George Pickens", position: "WR", value: 670 },
+    { name: "DeVonta Smith", position: "WR", value: 655 },
+    { name: "Jaylen Waddle", position: "WR", value: 640 },
+    { name: "Carnell Tate", position: "WR", value: 625 },
+    { name: "D.J. Moore", position: "WR", value: 610 },
+    { name: "Deebo Samuel", position: "WR", value: 595 },
+    { name: "Malik Nabers", position: "WR", value: 580 },
+    { name: "D.K. Metcalf", position: "WR", value: 565 },
+    { name: "Stefon Diggs", position: "WR", value: 550 },
+    { name: "Luther Burden III", position: "WR", value: 535 },
+    { name: "Emeka Egbuka", position: "WR", value: 520 },
+    { name: "Jameson Williams", position: "WR", value: 505 },
+    { name: "Malik Washington", position: "WR", value: 490 },
+    { name: "Tre Tucker", position: "WR", value: 475 },
+    { name: "Mike Evans", position: "WR", value: 460 },
+    { name: "Brock Bowers", position: "TE", value: 950 },
+    { name: "Trey McBride", position: "TE", value: 925 },
+    { name: "George Kittle", position: "TE", value: 850 },
+    { name: "Sam LaPorta", position: "TE", value: 825 },
+    { name: "T.J. Hockenson", position: "TE", value: 775 },
+    { name: "Mark Andrews", position: "TE", value: 750 },
+    { name: "David Njoku", position: "TE", value: 700 },
+    { name: "Dalton Kincaid", position: "TE", value: 675 },
+    { name: "Kyle Pitts", position: "TE", value: 650 },
+    { name: "Evan Engram", position: "TE", value: 625 },
+    { name: "Jake Ferguson", position: "TE", value: 575 },
+    { name: "Cole Kmet", position: "TE", value: 525 }
+];
+
+const wrProduction = {
+    "Jaxon Smith-Njigba": { games: 4, standardPpg: 21.2, halfPprPpg: 25.2, pprPpg: 29.2, yardsPerGame: 120.2, targetSharePct: 36.5, catchesPerGame: 8, targetsPerGame: 10.5, snaps: 203, snapsPerGame: 50.8 },
+    "Puka Nacua": { games: 2, standardPpg: 13, halfPprPpg: 16.6, pprPpg: 20, yardsPerGame: 99.5, targetSharePct: 27.3, catchesPerGame: 7, targetsPerGame: 10.5, snaps: 119, snapsPerGame: 59.5 },
+    "CeeDee Lamb": { games: 4, standardPpg: 18.8, halfPprPpg: 23.4, pprPpg: 28, yardsPerGame: 124.5, targetSharePct: 31.9, catchesPerGame: 9.2, targetsPerGame: 11.5, snaps: 216, snapsPerGame: 54 },
+    "Amon-Ra St. Brown": { games: 4, standardPpg: 15.1, halfPprPpg: 19, pprPpg: 22.8, yardsPerGame: 75.8, targetSharePct: 28.9, catchesPerGame: 7.8, targetsPerGame: 11.5, snaps: 247, snapsPerGame: 61.8 },
+    "Ja'Marr Chase": { games: 4, standardPpg: 9.8, halfPprPpg: 12.4, pprPpg: 15, yardsPerGame: 53, targetSharePct: 18.1, catchesPerGame: 5.2, targetsPerGame: 7, snaps: 185, snapsPerGame: 46.2 },
+    "Chris Olave": { games: 4, standardPpg: 13.8, halfPprPpg: 18.2, pprPpg: 22.5, yardsPerGame: 122.8, targetSharePct: 28.1, catchesPerGame: 8.8, targetsPerGame: 12, snaps: 196, snapsPerGame: 49 },
+    "Nico Collins": { games: 2, standardPpg: 19, halfPprPpg: 22.5, pprPpg: 26, yardsPerGame: 96.5, targetSharePct: 28.6, catchesPerGame: 7, targetsPerGame: 9, snaps: 95, snapsPerGame: 47.5 },
+    "Zay Flowers": { games: 3, standardPpg: 16.4, halfPprPpg: 19.4, pprPpg: 22.4, yardsPerGame: 117.3, targetSharePct: 30.1, catchesPerGame: 6, targetsPerGame: 7.3, snaps: 88, snapsPerGame: 29.3 },
+    "Tetairoa McMillan": { games: 4, standardPpg: 12.1, halfPprPpg: 15.4, pprPpg: 18.6, yardsPerGame: 96.2, targetSharePct: 26.7, catchesPerGame: 6.5, targetsPerGame: 9.8, snaps: 249, snapsPerGame: 62.2 },
+    "Justin Jefferson": { games: 3, standardPpg: 10.6, halfPprPpg: 12.8, pprPpg: 15, yardsPerGame: 59.7, targetSharePct: 25.4, catchesPerGame: 4.3, targetsPerGame: 5.7, snaps: 119, snapsPerGame: 39.7 },
+    "Garrett Wilson": { games: 4, standardPpg: 9.8, halfPprPpg: 12.8, pprPpg: 15.8, yardsPerGame: 67.5, targetSharePct: 28.2, catchesPerGame: 6, targetsPerGame: 7.8, snaps: 209, snapsPerGame: 52.2 },
+    "Drake London": { games: 4, standardPpg: 9.4, halfPprPpg: 11.8, pprPpg: 14.4, yardsPerGame: 92.5, targetSharePct: 27.4, catchesPerGame: 5, targetsPerGame: 6.5, snaps: 168, snapsPerGame: 42 },
+    "Parker Washington": { games: 4, standardPpg: 8.8, halfPprPpg: 10.8, pprPpg: 12.8, yardsPerGame: 57, targetSharePct: 26, catchesPerGame: 4, targetsPerGame: 6.5, snaps: 182, snapsPerGame: 45.5 },
+    "Christian Watson": { games: 4, standardPpg: 14.3, halfPprPpg: 16.8, pprPpg: 19.3, yardsPerGame: 82.8, targetSharePct: 21.3, catchesPerGame: 5, targetsPerGame: 8, snaps: 199, snapsPerGame: 49.8 },
+    "Davante Adams": { games: 4, standardPpg: 12.8, halfPprPpg: 15.5, pprPpg: 18.2, yardsPerGame: 97.5, targetSharePct: 24.5, catchesPerGame: 5.5, targetsPerGame: 9.5, snaps: 224, snapsPerGame: 56 },
+    "Rashee Rice": { games: 4, standardPpg: 6.3, halfPprPpg: 7.9, pprPpg: 9.5, yardsPerGame: 47.5, targetSharePct: 14.4, catchesPerGame: 3.2, targetsPerGame: 4.2, snaps: 166, snapsPerGame: 41.5 },
+    "Tee Higgins": { games: 4, standardPpg: 11.5, halfPprPpg: 14.6, pprPpg: 17.8, yardsPerGame: 100.2, targetSharePct: 25.2, catchesPerGame: 6.2, targetsPerGame: 9.8, snaps: 202, snapsPerGame: 50.5 },
+    "A.J. Brown": { games: 4, standardPpg: 0.6, halfPprPpg: 1, pprPpg: 1.4, yardsPerGame: 6.5, targetSharePct: 3.4, catchesPerGame: 0.8, targetsPerGame: 1, snaps: 31, snapsPerGame: 7.8 },
+    "Jalen Coker": { games: 3, standardPpg: 11.4, halfPprPpg: 14.4, pprPpg: 17.4, yardsPerGame: 74, targetSharePct: 20.6, catchesPerGame: 6, targetsPerGame: 7.3, snaps: 135, snapsPerGame: 45 },
+    "Michael Wilson": { games: 4, standardPpg: 8, halfPprPpg: 11.1, pprPpg: 14.2, yardsPerGame: 64.5, targetSharePct: 29.7, catchesPerGame: 6.2, targetsPerGame: 11, snaps: 254, snapsPerGame: 63.5 },
+    "Matthew Golden": { games: 4, standardPpg: 10, halfPprPpg: 12.2, pprPpg: 14.5, yardsPerGame: 68.5, targetSharePct: 24.7, catchesPerGame: 4.5, targetsPerGame: 9.2, snaps: 214, snapsPerGame: 53.5 },
+    "George Pickens": { games: 4, standardPpg: 5.6, halfPprPpg: 7.9, pprPpg: 10.1, yardsPerGame: 56.2, targetSharePct: 19.4, catchesPerGame: 4.5, targetsPerGame: 7, snaps: 221, snapsPerGame: 55.2 },
+    "DeVonta Smith": { games: 3, standardPpg: 9.8, halfPprPpg: 13, pprPpg: 16.2, yardsPerGame: 78.3, targetSharePct: 32.9, catchesPerGame: 6.3, targetsPerGame: 9, snaps: 169, snapsPerGame: 56.3 },
+    "Jaylen Waddle": { games: 4, standardPpg: 7, halfPprPpg: 9, pprPpg: 11, yardsPerGame: 46.2, targetSharePct: 20.8, catchesPerGame: 4, targetsPerGame: 6.5, snaps: 170, snapsPerGame: 42.5 },
+    "Carnell Tate": { games: 4, standardPpg: 6.2, halfPprPpg: 9, pprPpg: 11.7, yardsPerGame: 67, targetSharePct: 29.6, catchesPerGame: 5.5, targetsPerGame: 8, snaps: 191, snapsPerGame: 47.8 },
+    "D.J. Moore": { games: 4, standardPpg: 6.1, halfPprPpg: 7.6, pprPpg: 9.1, yardsPerGame: 44.5, targetSharePct: 17.9, catchesPerGame: 3, targetsPerGame: 5, snaps: 132, snapsPerGame: 33 },
+    "Deebo Samuel": { games: 4, standardPpg: 11, halfPprPpg: 12.7, pprPpg: 14.5, yardsPerGame: 46.2, targetSharePct: 15.6, catchesPerGame: 3.5, targetsPerGame: 4.2, snaps: 143, snapsPerGame: 35.8 },
+    "Malik Nabers": { games: 4, standardPpg: 6.7, halfPprPpg: 9, pprPpg: 11.2, yardsPerGame: 52, targetSharePct: 23.6, catchesPerGame: 4.5, targetsPerGame: 6.5, snaps: 180, snapsPerGame: 45 },
+    "D.K. Metcalf": { games: 4, standardPpg: 6.8, halfPprPpg: 8.8, pprPpg: 10.8, yardsPerGame: 53.2, targetSharePct: 22.9, catchesPerGame: 4, targetsPerGame: 8.2, snaps: 261, snapsPerGame: 65.2 },
+    "Stefon Diggs": { games: 4, standardPpg: 8.8, halfPprPpg: 11, pprPpg: 13.2, yardsPerGame: 42.5, targetSharePct: 24, catchesPerGame: 4.5, targetsPerGame: 7.8, snaps: 163, snapsPerGame: 40.8 },
+    "Luther Burden III": { games: 4, standardPpg: 7, halfPprPpg: 9.4, pprPpg: 11.7, yardsPerGame: 54.8, targetSharePct: 23.8, catchesPerGame: 4.8, targetsPerGame: 7.2, snaps: 193, snapsPerGame: 48.2 },
+    "Emeka Egbuka": { games: 4, standardPpg: 5.3, halfPprPpg: 7.2, pprPpg: 9, yardsPerGame: 38.5, targetSharePct: 19.8, catchesPerGame: 3.8, targetsPerGame: 6, snaps: 215, snapsPerGame: 53.8 },
+    "Jameson Williams": { games: 4, standardPpg: 5.7, halfPprPpg: 7.7, pprPpg: 9.7, yardsPerGame: 57.2, targetSharePct: 15.7, catchesPerGame: 4, targetsPerGame: 6.2, snaps: 251, snapsPerGame: 62.8 },
+    "Malik Washington": { games: 4, standardPpg: 5.3, halfPprPpg: 7.4, pprPpg: 9.5, yardsPerGame: 54.8, targetSharePct: 27.2, catchesPerGame: 4.2, targetsPerGame: 7, snaps: 195, snapsPerGame: 48.8 },
+    "Tre Tucker": { games: 4, standardPpg: 7.3, halfPprPpg: 9.2, pprPpg: 11.1, yardsPerGame: 58.2, targetSharePct: 16.8, catchesPerGame: 3.8, targetsPerGame: 5.8, snaps: 181, snapsPerGame: 45.2 },
+    "Mike Evans": { games: 4, standardPpg: 8.3, halfPprPpg: 10.5, pprPpg: 12.6, yardsPerGame: 53.2, targetSharePct: 22, catchesPerGame: 4.2, targetsPerGame: 6, snaps: 134, snapsPerGame: 33.5 }
+};
+
+const wrRoutes = {
+    "Jaxon Smith-Njigba": 93,
+    "Puka Nacua": 20,
+    "CeeDee Lamb": 96,
+    "Amon-Ra St. Brown": 111,
+    "Ja'Marr Chase": 111,
+    "Chris Olave": 132,
+    "Nico Collins": 37,
+    "Zay Flowers": 25,
+    "Tetairoa McMillan": 123,
+    "Justin Jefferson": 56,
+    "Garrett Wilson": 107,
+    "Drake London": 72,
+    "Parker Washington": 76,
+    "Christian Watson": 113,
+    "Davante Adams": 105,
+    "Rashee Rice": 93,
+    "Tee Higgins": 98,
+    "A.J. Brown": 16,
+    "Jalen Coker": 91,
+    "Michael Wilson": 120,
+    "Matthew Golden": 113,
+    "George Pickens": 102,
+    "DeVonta Smith": 105,
+    "Jaylen Waddle": 77,
+    "Carnell Tate": 91,
+    "D.J. Moore": 58,
+    "Deebo Samuel": 61,
+    "Malik Nabers": 72,
+    "D.K. Metcalf": 125,
+    "Stefon Diggs": 75,
+    "Luther Burden III": 84,
+    "Emeka Egbuka": 105,
+    "Jameson Williams": 109,
+    "Malik Washington": 94,
+    "Tre Tucker": 79,
+    "Mike Evans": 56
+};
+
+const scoringAdjustments = {
+    standard: { RB: 1, WR: 1, TE: 1 },
+    half: { RB: 1.025, WR: 1.04, TE: 1.05 },
+    ppr: { RB: 1.05, WR: 1.08, TE: 1.1 }
+};
+const numberFormat = new Intl.NumberFormat();
+const positionOrder = ["QB", "RB", "WR", "TE"];
+const rankingSnapshot = window.fantasyRankingSnapshot;
+let activePlayers = [];
+let playerInputCounter = 0;
+
+function playerValue(name) {
+    if (!name) return 0;
+    const player = activePlayers.find(item => item.name === name);
+    return player ? player.value : (getSelectedPlayerPosition(name) ? 25 : 0);
+}
+
+function buildActivePlayers() {
+    const mode = document.getElementById("rankingMode").value;
+    const scoring = document.getElementById("scoring").value;
+    const superflex = document.getElementById("superflex").checked;
+    const playersByValue = positionOrder.flatMap(position => {
+        const multiplierInput = document.getElementById(position.toLowerCase() + "Multiplier");
+        const rawMultiplier = Number(multiplierInput.value);
+        const positionMultiplier = Math.min(1.5, Math.max(.25, Number.isFinite(rawMultiplier) ? rawMultiplier : 1));
+        const scoringAdjustment = scoringAdjustments[scoring][position] || 1;
+        const superflexAdjustment = superflex && position === "QB" ? 1.25 : 1;
+
+        return rankingSnapshot.lists[mode][position].split("|").map((name, index) => ({
+            name,
+            position,
+            positionRank: index + 1,
+            value: Math.round(Math.max(100, 1000 - index * 9) * positionMultiplier * scoringAdjustment * superflexAdjustment)
+        }));
+    });
+
+    return playersByValue
+        .sort((first, second) => second.value - first.value || first.positionRank - second.positionRank)
+        .map((player, index) => ({ ...player, overallRank: index + 1 }));
+}
+
+function getSelectedPlayerPosition(name) {
+    const mode = document.getElementById("rankingMode").value;
+    const otherMode = mode === "redraft" ? "dynasty" : "redraft";
+    return positionOrder.find(position =>
+        rankingSnapshot.lists[mode][position].split("|").includes(name) ||
+        rankingSnapshot.lists[otherMode][position].split("|").includes(name)
+    ) || players.find(player => player.name === name)?.position;
+}
+
+function populatePlayerSelect(input, results, showResults = false) {
+    const searchText = input.value.trim().toLowerCase();
+    const selectedElsewhere = new Set(Array.from(document.querySelectorAll(".asset input.player-select"))
+        .filter(otherInput => otherInput !== input)
+        .map(otherInput => otherInput.value)
+        .filter(name => activePlayers.some(player => player.name === name)));
+    const matches = activePlayers.filter(player =>
+        (!searchText || player.name.toLowerCase().includes(searchText) || player.name === input.value) &&
+        (!selectedElsewhere.has(player.name) || player.name === input.value)
+    ).slice(0, 12);
+
+    results.replaceChildren();
+    if (showResults && matches.length) {
+        matches.forEach(player => {
+            const option = document.createElement("button");
+            option.className = "player-search-option";
+            option.type = "button";
+            option.setAttribute("role", "option");
+            option.tabIndex = -1;
+            const name = document.createElement("span");
+            name.textContent = "#" + player.overallRank + " " + player.name;
+            const meta = document.createElement("span");
+            meta.className = "player-search-meta";
+            meta.textContent = player.position + " · " + numberFormat.format(player.value);
+            option.append(name, meta);
+            option.addEventListener("pointerdown", event => event.preventDefault());
+            option.addEventListener("click", () => {
+                input.value = player.name;
+                results.hidden = true;
+                input.setAttribute("aria-expanded", "false");
+                calculate();
+                if (document.activeElement !== input) {
+                    input.dataset.skipSuggestionFocus = "true";
+                    input.focus();
+                }
+            });
+            option.addEventListener("keydown", event => {
+                const options = Array.from(results.querySelectorAll(".player-search-option"));
+                const index = options.indexOf(option);
+                if (event.key === "ArrowDown" && options[index + 1]) {
+                    event.preventDefault();
+                    options[index + 1].focus();
+                } else if (event.key === "ArrowUp") {
+                    event.preventDefault();
+                    if (options[index - 1]) options[index - 1].focus();
+                    else {
+                        input.dataset.skipSuggestionFocus = "true";
+                        input.focus();
+                    }
+                } else if (event.key === "Escape") {
+                    results.hidden = true;
+                    input.setAttribute("aria-expanded", "false");
+                    input.dataset.skipSuggestionFocus = "true";
+                    input.focus();
+                }
+            });
+            results.appendChild(option);
+        });
+        results.hidden = false;
+        input.setAttribute("aria-expanded", "true");
+        input.dataset.activeOptionIndex = "-1";
+    } else {
+        if (showResults) {
+            const empty = document.createElement("div");
+            empty.className = "player-search-empty";
+            empty.textContent = "No matching ranked players";
+            results.appendChild(empty);
+        }
+        results.hidden = !showResults;
+        input.setAttribute("aria-expanded", String(showResults));
+    }
+}
+
+function setTheme(isDark, persist = false) {
+    document.documentElement.dataset.theme = isDark ? "dark" : "light";
+    document.querySelector('meta[name="theme-color"]').content = isDark ? "#111916" : "#f1f4ef";
+    if (persist) {
+        try {
+            localStorage.setItem("fantasy-trade-theme", isDark ? "dark" : "light");
+        } catch {}
+    }
+}
+
+function refreshRankings() {
+    const mode = document.getElementById("rankingMode").value;
+    activePlayers = buildActivePlayers();
+    document.getElementById("rankingSourceNote").textContent = mode === "redraft"
+        ? "FantasyPros 2026 rest-of-season Half-PPR consensus (Oct. 6). QB/TE ranks beyond consensus depth are ordered by Sleeper Weeks 1-4 PPR points per game. Consensus reflects expert health, team and schedule judgments; full injury history is unavailable."
+        : "FantasyPros 2026 dynasty PPR consensus (Oct. 5). QB ranks beyond consensus depth use Weeks 1-4 PPR points per game with a modest age adjustment. Dynasty consensus reflects long-term age outlook; full injury history is unavailable.";
+    document.querySelectorAll(".asset input.player-select").forEach(input => populatePlayerSelect(input, input.playerSearchResults));
+}
+
+function createPlayerRow(team) {
+    const container = document.getElementById("team" + team);
+    const entry = document.createElement("div");
+    entry.className = "asset-entry";
+    const row = document.createElement("div");
+    row.className = "asset";
+
+    const input = document.createElement("input");
+    const results = document.createElement("div");
+    results.id = "player-options-" + (++playerInputCounter);
+    results.className = "player-search-results";
+    results.setAttribute("role", "listbox");
+    results.setAttribute("aria-label", "Ranked player suggestions");
+    results.hidden = true;
+    input.className = "player-select";
+    input.type = "search";
+    input.placeholder = "Search or choose player";
+    input.autocomplete = "off";
+    input.setAttribute("role", "combobox");
+    input.setAttribute("aria-autocomplete", "list");
+    input.setAttribute("aria-expanded", "false");
+    input.setAttribute("aria-controls", results.id);
+    input.setAttribute("aria-label", "Search players received by Team " + team);
+    input.playerSearchResults = results;
+    populatePlayerSelect(input, results);
+
+    const value = document.createElement("output");
+    value.className = "asset-value";
+    value.textContent = "0";
+    value.setAttribute("aria-label", "Player trade value");
+
+    const remove = document.createElement("button");
+    remove.className = "remove-player";
+    remove.type = "button";
+    remove.textContent = "Remove";
+    remove.setAttribute("aria-label", "Remove player from Team " + team);
+    remove.addEventListener("click", () => {
+        entry.remove();
+        calculate();
+    });
+
+    const statsPanel = document.createElement("details");
+    statsPanel.className = "player-stats";
+    statsPanel.hidden = true;
+    const statsSummary = document.createElement("summary");
+    statsSummary.textContent = "View 2026 season averages";
+    const statsGrid = document.createElement("dl");
+    statsGrid.className = "stats-grid";
+    [
+        ["games", "Games played"],
+        ["fantasyPpg", "Fantasy PPG"],
+        ["yardsPerGame", "Receiving YPG"],
+        ["targetShare", "Target share"],
+        ["routes", "Routes run (season)"],
+        ["catchesPerGame", "Catches/game"],
+        ["targetsPerGame", "Targets/game"],
+        ["snaps", "Offensive snaps"],
+        ["snapsPerGame", "Snaps/game"]
+    ].forEach(([key, label]) => {
+        const item = document.createElement("div");
+        const term = document.createElement("dt");
+        term.dataset.label = key;
+        term.textContent = label;
+        const description = document.createElement("dd");
+        description.dataset.stat = key;
+        item.append(term, description);
+        statsGrid.appendChild(item);
+    });
+    const statsSource = document.createElement("p");
+    statsSource.className = "stats-source";
+    const sleeperLink = document.createElement("a");
+    sleeperLink.href = "https://api.sleeper.app/v1/stats/nfl/regular/2026/4";
+    sleeperLink.target = "_blank";
+    sleeperLink.rel = "noopener noreferrer";
+    sleeperLink.textContent = "Sleeper game logs";
+    const routesLink = document.createElement("a");
+    routesLink.href = "https://heatradar.app/nfl/routes";
+    routesLink.target = "_blank";
+    routesLink.rel = "noopener noreferrer";
+    routesLink.textContent = "HeatRadar route totals";
+    statsSource.append("Sleeper production, Weeks 1-4: ", sleeperLink, " · Routes through Week 3: ", routesLink, " · Retrieved Oct. 6, 2026.");
+    statsPanel.append(statsSummary, statsGrid, statsSource);
+
+    input.addEventListener("input", () => {
+        populatePlayerSelect(input, results, true);
+        calculate();
+    });
+    input.addEventListener("focus", () => {
+        if (input.dataset.skipSuggestionFocus) {
+            delete input.dataset.skipSuggestionFocus;
+            return;
+        }
+        populatePlayerSelect(input, results, true);
+    });
+    input.addEventListener("blur", () => {
+        results.hidden = true;
+        input.setAttribute("aria-expanded", "false");
+    });
+    input.addEventListener("keydown", event => {
+        if (event.key === "ArrowDown") {
+            const firstOption = results.querySelector(".player-search-option");
+            if (firstOption) {
+                event.preventDefault();
+                firstOption.focus();
+            }
+        } else if (event.key === "Escape") {
+            results.hidden = true;
+            input.setAttribute("aria-expanded", "false");
+        }
+    });
+    row.append(input, value, remove);
+    entry.append(row, results, statsPanel);
+    container.appendChild(entry);
+    calculate();
+}
+
+function updateProductionPanel(select) {
+    const panel = select.closest(".asset-entry").querySelector(".player-stats");
+    const stats = wrProduction[select.value];
+    panel.hidden = !stats;
+    if (!stats) return;
+
+    const scoring = document.getElementById("scoring").value;
+    const scoringLabels = { standard: "Standard", half: "Half PPR", ppr: "PPR" };
+    const pointsKey = { standard: "standardPpg", half: "halfPprPpg", ppr: "pprPpg" }[scoring];
+    const values = {
+        games: stats.games,
+        fantasyPpg: stats[pointsKey].toFixed(1),
+        yardsPerGame: stats.yardsPerGame.toFixed(1),
+        targetShare: stats.targetSharePct.toFixed(1) + "%",
+        routes: numberFormat.format(wrRoutes[select.value]),
+        catchesPerGame: stats.catchesPerGame.toFixed(1),
+        targetsPerGame: stats.targetsPerGame.toFixed(1),
+        snaps: numberFormat.format(stats.snaps),
+        snapsPerGame: stats.snapsPerGame.toFixed(1)
+    };
+
+    Object.entries(values).forEach(([key, value]) => {
+        panel.querySelector('[data-stat="' + key + '"]').textContent = value;
+    });
+    panel.querySelector('[data-label="fantasyPpg"]').textContent = "Fantasy PPG (" + scoringLabels[scoring] + ")";
+}
+
+function calculate() {
+    const inputs = Array.from(document.querySelectorAll(".asset input.player-select"));
+    const usedPlayers = new Set();
+
+    inputs.forEach(input => {
+        const name = input.value.trim();
+        const isKnownPlayer = activePlayers.some(player => player.name === name) || Boolean(getSelectedPlayerPosition(name));
+        const isDuplicate = isKnownPlayer && usedPlayers.has(name);
+        const value = isDuplicate ? 0 : playerValue(name);
+        if (isKnownPlayer && !isDuplicate) usedPlayers.add(name);
+        input.setAttribute("aria-invalid", String(Boolean(name && (!isKnownPlayer || isDuplicate))));
+        input.dataset.tradeValue = String(value);
+        input.parentElement.querySelector(".asset-value").textContent = numberFormat.format(value);
+        updateProductionPanel(input);
+    });
+
+    const totalA = Array.from(document.querySelectorAll("#teamA input.player-select"))
+        .reduce((sum, input) => sum + Number(input.dataset.tradeValue || 0), 0);
+    const totalB = Array.from(document.querySelectorAll("#teamB input.player-select"))
+        .reduce((sum, input) => sum + Number(input.dataset.tradeValue || 0), 0);
+
+    document.getElementById("totalA").textContent = numberFormat.format(totalA);
+    document.getElementById("totalB").textContent = numberFormat.format(totalB);
+
+    const result = document.getElementById("result");
+    const winner = document.getElementById("winner");
+    const differenceElement = document.getElementById("difference");
+    const percentageElement = document.getElementById("percentage");
+    const hasRankedPlayer = input => activePlayers.some(player => player.name === input.value) || Boolean(getSelectedPlayerPosition(input.value));
+    const hasPlayersA = Array.from(document.querySelectorAll("#teamA input.player-select")).some(hasRankedPlayer);
+    const hasPlayersB = Array.from(document.querySelectorAll("#teamB input.player-select")).some(hasRankedPlayer);
+
+    result.classList.remove("is-even", "is-unbalanced", "is-pending");
+    if (!hasPlayersA || !hasPlayersB) {
+        result.classList.add("is-pending");
+        winner.textContent = "Add at least one player to both sides to compare.";
+        differenceElement.textContent = "0";
+        percentageElement.textContent = "";
+        return;
+    }
+
+    const difference = Math.abs(totalA - totalB);
+    differenceElement.textContent = numberFormat.format(difference);
+    percentageElement.textContent = (difference / Math.max(totalA, totalB) * 100).toFixed(1) + "% value gap";
+
+    if (totalA === totalB) {
+        result.classList.add("is-even");
+        winner.textContent = "Even by the selected rankings and league settings.";
+    } else if (totalA > totalB) {
+        result.classList.add("is-unbalanced");
+        winner.textContent = "Team A receives more calculated value.";
+    } else {
+        result.classList.add("is-unbalanced");
+        winner.textContent = "Team B receives more calculated value.";
+    }
+}
+
+document.querySelectorAll(".add-player").forEach(button => {
+    button.addEventListener("click", () => createPlayerRow(button.dataset.team));
+});
+document.getElementById("scoring").addEventListener("change", () => {
+    refreshRankings();
+    calculate();
+});
+document.getElementById("superflex").addEventListener("change", () => {
+    refreshRankings();
+    calculate();
+});
+positionOrder.forEach(position => {
+    document.getElementById(position.toLowerCase() + "Multiplier").addEventListener("input", () => {
+        refreshRankings();
+        calculate();
+    });
+});
+document.getElementById("rankingMode").addEventListener("change", () => {
+    refreshRankings();
+    calculate();
+});
+const darkModeToggle = document.getElementById("darkMode");
+darkModeToggle.checked = document.documentElement.dataset.theme === "dark";
+darkModeToggle.addEventListener("change", () => {
+    setTheme(darkModeToggle.checked, true);
+});
+setTheme(darkModeToggle.checked);
+refreshRankings();
+createPlayerRow("A");
+createPlayerRow("B");
+</script>
+</body>
+</html>
